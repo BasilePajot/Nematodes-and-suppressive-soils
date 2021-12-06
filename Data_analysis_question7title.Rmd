@@ -1,0 +1,93 @@
+---
+title: "Data_analysis_question7"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###Libraries:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(multcompView)
+theme_set(new=theme_bw())
+```
+
+##Importing data:
+
+```{r}
+data_exp1 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp1.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+data_exp2 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp2.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp3 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp3.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp4 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp4.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp5 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp5.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp6 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp6.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+```
+
+
+#7. Does the supernatant have a nematicidal effect ?
+
+```{r}
+#Rajout d'une colonne Ajout qui permet de dissocier les inoculations (témoin Lb pour l'expérience 6 et surnageant pour la 5).
+data_exp5<-data_exp5 %>% 
+  mutate(Ajout="Surnageant")
+
+data_exp6<-data_exp6 %>% 
+  mutate(Ajout="Lb")
+
+#Fusion des deux tableaux pour pouvoir les comparer
+data_comp5_6<- full_join(data_exp5, data_exp6)
+
+#Représentation graphique
+
+ggplot(data_comp5_6, aes(Ajout, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de l'inoculatin de surnageant ou \nde milieu nutritif Lb servant de témoin")+
+  theme(plot.title=element_text(face='bold'))
+```
+
+#Test statistique: 
+```{r}
+test5_6<-lm(Moyenne~Ajout, data=data_comp5_6)
+anova(test5_6)
+
+tukey5_6<-TukeyHSD(aov(test5_6))
+multcompLetters(extract_p(tukey5_6$Ajout))
+
+```
+
+On a statistiquement des échantillons identiques donc on ne pas dire que le surnageant a un effet nématicide. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. Est-ce que les bactéries ont un effet sur l'infection des nématodes ?
+2. Est-ce qu'il y a une différence de virulence entre les deux souches bactérienne (*/Wt)?
+3. Est-ce qu'il y a une différence d'infection selon le sol ?
+4. Y a-t-il ue différence de survie des bactéries dans les différents sols ?
+5.Y a-t-il une différence de virulence des bactéries selon le sol ?
+6. Y a-t-il une différence de virulence selon le mode d'inoculation ?
+7. Le surnageant a-t-il un effet nématicide ?

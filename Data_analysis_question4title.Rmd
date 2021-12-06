@@ -1,0 +1,67 @@
+---
+title: "Data_analysis_question 4"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###Libraries:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(multcompView)
+theme_set(new=theme_bw())
+```
+##Importing data:
+
+```{r}
+data_exp1 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp1.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+data_exp2 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp2.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp3 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp3.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp4 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp4.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp5 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp5.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp6 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp6.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+```
+
+#4. Is there a difference in the survival of bacteria according to the soil ?
+
+```{r}
+ggplot(data_exp1, aes(Sol, Nombre_bacteries.mL, fill=Sol))+
+  geom_boxplot()+
+  labs(title="Nombre de bactéries vivante en fonctin du sol")+
+  theme(plot.title=element_text(face='bold'))
+```
+
+Nous allons maintenant effectuer un test de Tukey pour voir s'il y a des différences significatives entre ces différents sols, même si à la vue de ces résultats, il semble que les sols aient bien des effets différents sur la survie des bactéries. 
+
+```{r}
+test1<- lm(Nombre_bacteries.mL~Sol, data=data_exp1)
+anova(test1)
+tukey1<- TukeyHSD(aov(test1))
+multcompLetters(extract_p(tukey1$Sol))
+```
+
+Les résultats statistiques nous montrent que nous les sols ne sont pas significativement différents les uns des autres, à l'exception du sol C. On ne peut donc pas dire que les sols utilisés ont un impact sur la survie des bactéries, à l'exception du sol C.
+
+
+
+
+
+
+
+
+
+

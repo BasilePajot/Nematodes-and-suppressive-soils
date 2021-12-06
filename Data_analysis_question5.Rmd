@@ -1,0 +1,60 @@
+---
+title: "Data_analysis_question5"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+###Libraries:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(multcompView)
+theme_set(new=theme_bw())
+```
+##Importing data:
+
+```{r}
+data_exp1 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp1.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+data_exp2 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp2.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp3 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp3.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp4 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp4.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp5 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp5.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp6 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp6.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+```
+
+
+
+#5. Is there a virulence difference considering the soil ?
+
+```{r}
+#Ajout d'une variable en plus (Nb_inoculation) définissant le nombre d'inoculations de bactéries et permettant ainsi de différencier les expériences 2 et 3.
+data_exp2<- data_exp2 %>% 
+  mutate(Nb_inoculation=1)
+
+data_exp3<- data_exp3 %>% 
+  mutate(Nb_inoculation=3)
+
+#Fusion des deux tableaux.
+data_comp2_3<-full_join(data_exp2, data_exp3)
+
+#Représentation graphique des résultats
+ggplot(data_comp2_3, aes(Souche_bacterienne, Moyenne,  fill=Sol))+
+  geom_boxplot()+
+  facet_wrap(Nb_inoculation~., scales='free_y')+
+  labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \net du nombre d'inoculation bactérienne")+
+  theme(plot.title = element_text(face='bold'))
+
+```

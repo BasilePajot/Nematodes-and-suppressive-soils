@@ -1,0 +1,225 @@
+---
+title: "Data_analysis_question1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###Libraries:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(multcompView)
+theme_set(new=theme_bw())
+```
+##Importing data:
+
+```{r}
+data_exp1 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp1.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+data_exp2 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp2.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp3 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp3.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp4 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp4.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp5 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp5.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp6 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp6.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+```
+
+
+
+#1. Do the bacteria have an effect on the nematode infection ?
+
+```{r}
+#On ajoute une variable aux expériences 2 et 4 pour définir la présence (1) ou l'absence (0) de Bactérie
+data_exp2<-data_exp2 %>% 
+  mutate(Presence_bact='Présente')
+
+data_exp4<-data_exp4 %>% 
+  mutate(Presence_bact='Absente')
+
+
+#On combine les résultats des expériences 2 et 4 pour pouvoir les comparer
+data_comp2_4<- full_join(data_exp2, data_exp4)
+
+#On plote le résultat
+
+plot1_2<-ggplot(data=data_comp2_4, aes(Presence_bact, Moyenne, fill=Sol))+
+  geom_boxplot()+
+  labs(title="Nombre de galles en fonction de la présence ou de l'absence de bactérie \ninoculée et du sol en comptant une seule inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+
+print(plot1_2)
+```
+
+
+
+We did plot the results of experiments 2 against experiment 4 to see if there is a difference of action on the nematodes. Now we will realise a statistical test to see if the results we had are significantly different or not. 
+
+```{r}
+#We will do an anova test and then a Tukey test to determine if the results are the same or not. We will seperate the tests realised on experiments 2 and 3.
+
+#Experiment 2 A soil
+data_testA_2_4<-data_comp2_4 %>% 
+  filter (Sol=='A')
+
+ggplot(data_testA_2_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable non-autoclavé en une inocultations")+
+  theme(plot.title=element_text(face='bold'))
+
+test2_4A<-lm(Moyenne~Presence_bact, data=data_testA_2_4)
+anova(test2_4A)
+
+tukey2_4A<-TukeyHSD(aov(test2_4A))
+multcompLetters(extract_p(tukey2_4A$Presence_bact))
+    
+```
+
+
+```{r}
+#Experiment 2 B soil
+data_testB_2_4<-data_comp2_4 %>% 
+  filter (Sol=='B')
+ggplot(data_testB_2_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable et terreau non-autoclavé en une inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+test2_4B<-lm(Moyenne~Presence_bact, data=data_testB_2_4)
+anova(test2_4B)
+
+tukey2_4B<-TukeyHSD(aov(test2_4B))
+multcompLetters(extract_p(tukey2_4B$Presence_bact))
+```
+
+```{r}
+#Experiment 2 C soil
+data_testC_2_4<-data_comp2_4 %>% 
+  filter (Sol=='C')
+ggplot(data_testC_2_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable autoclavé en une inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+test2_4C<-lm(Moyenne~Presence_bact, data=data_testC_2_4)
+anova(test2_4C)
+
+tukey2_4C<-TukeyHSD(aov(test2_4C))
+multcompLetters(extract_p(tukey2_4C$Presence_bact))
+```
+
+```{r}
+#Experiment 2 D soil
+data_testD_2_4<-data_comp2_4 %>% 
+  filter (Sol=='D')
+ggplot(data_testD_2_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable et terreau autoclavé en une inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+test2_4D<-lm(Moyenne~Presence_bact, data=data_testD_2_4)
+anova(test2_4D)
+
+tukey2_4D<-TukeyHSD(aov(test2_4D))
+multcompLetters(extract_p(tukey2_4D$Presence_bact))
+```
+#Experiment 3
+```{r}
+#Onfait pareil avec les données de l'expérience 3
+#On ajoute une variable aux expériences 3 pour définir la présence (1) ou l'absence (0) de Bactérie
+data_exp3<-data_exp3 %>% 
+  mutate(Presence_bact='Présente')
+
+
+#On combine les résultats des expériences 2 et 4 pour pouvoir les comparer
+data_comp3_4<- full_join(data_exp3, data_exp4)
+
+#On plote le résultat
+
+plot1_3<-ggplot(data=data_comp3_4, aes(Presence_bact, Moyenne, fill=Sol))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée et en fonction du sol en trois inoculations")+
+  theme(plot.title=element_text(face='bold'))
+
+
+print(plot1_3)
+```
+
+
+```{r}
+#Experiment 3 A soil
+data_testA_3_4<-data_comp3_4 %>% 
+  filter (Sol=='A')
+ggplot(data_testA_3_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable non-autoclavé en trois inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+test3_4A<-lm(Moyenne~Presence_bact, data=data_testA_3_4)
+anova(test3_4A)
+
+tukey3_4A<-TukeyHSD(aov(test3_4A))
+multcompLetters(extract_p(tukey3_4A$Presence_bact))
+```
+```{r}
+#Experiment 3 B soil
+data_testB_3_4<-data_comp3_4 %>% 
+  filter (Sol=='B')
+ggplot(data_testB_3_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable et terreau non-autoclavé en trois inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+test3_4B<-lm(Moyenne~Presence_bact, data=data_testB_3_4)
+anova(test3_4B)
+
+tukey3_4B<-TukeyHSD(aov(test3_4B))
+multcompLetters(extract_p(tukey3_4B$Presence_bact))
+```
+
+```{r}
+#Experiment 3 C soil
+data_testC_3_4<-data_comp3_4 %>% 
+  filter (Sol=='C')
+ggplot(data_testC_3_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable autoclavé en trois inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+test3_4C<-lm(Moyenne~Presence_bact, data=data_testC_3_4)
+anova(test3_4C)
+
+tukey3_4C<-TukeyHSD(aov(test3_4C))
+multcompLetters(extract_p(tukey3_4C$Presence_bact))
+```
+
+```{r}
+#Experiment 3 D soil
+data_testD_3_4<-data_comp3_4 %>% 
+  filter (Sol=='D')
+ggplot(data_testD_3_4, aes(Presence_bact, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la présence ou l'absence de \nbactérie utilisée dans du sable et terreau autoclavé en trois inoculation")+
+  theme(plot.title=element_text(face='bold'))
+
+test3_4D<-lm(Moyenne~Presence_bact, data=data_testD_3_4)
+anova(test3_4D)
+
+tukey3_4D<-TukeyHSD(aov(test3_4D))
+multcompLetters(extract_p(tukey3_4D$Presence_bact))
+```
+
+
+

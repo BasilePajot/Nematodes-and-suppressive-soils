@@ -1,0 +1,208 @@
+---
+title: "Data_analysis_question2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+###Libraries:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(multcompView)
+theme_set(new=theme_bw())
+```
+##Importing data:
+
+```{r}
+data_exp1 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp1.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+data_exp2 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp2.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp3 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp3.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp4 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp4.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp5 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp5.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp6 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp6.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+```
+
+
+
+
+#2. Is there a virulence difference between the two bacterian strands (*/Wt) ?
+
+```{r}
+#Ajout d'une variable en plus (Nb_inoculation) définissant le nombre d'inoculations de bactéries et permettant ainsi de différencier les expériences 2 et 3.
+data_exp2<- data_exp2 %>% 
+  mutate(Nb_inoculation=1)
+
+data_exp3<- data_exp3 %>% 
+  mutate(Nb_inoculation=3)
+
+#Fusion des deux tableaux.
+data_comp2_3<-full_join(data_exp2, data_exp3)
+
+#Représentation graphique des résultats
+ggplot(data_comp2_3, aes(Souche_bacterienne, Moyenne,  fill=Sol))+
+  geom_boxplot()+
+  facet_wrap(Nb_inoculation~., scales='free_y')+
+  labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \net du nombre d'inoculation bactérienne")+
+  theme(plot.title = element_text(face='bold'))
+
+
+```
+
+#Statistiques
+
+On réalise maintenant des tests de Tukey sur les différents sols utilisés à nombre d'inoculations constant. 
+
+```{r}
+#Expérience 2 sol A
+data_test2A<-data_exp2 %>% 
+  filter(Sol=='A')
+
+test2A<-lm(Moyenne~Souche_bacterienne, data=data_test2A)
+anova(test2A)
+tukey2A<-TukeyHSD(aov(test2A))
+multcompLetters(extract_p(tukey2A$Souche_bacterienne))
+
+ggplot(data_test2A, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+  labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable non-autoclavé en une seule inocultation")+
+  theme(plot.title=element_text(face='bold'))
+```
+D'après les résultats obtenus, nous n'avons pas de différence significative de galles au sein de l'expérience 2 donc nous ne pouvons pas dire qu'il y a un effet différent entre les deux souches bactériennes utilisées sur le sol A.
+
+```{r}
+#Expérience 2 sol B
+data_test2B<-data_exp2 %>% 
+  filter(Sol=='B')
+
+test2B<-lm(Moyenne~Souche_bacterienne, data=data_test2B)
+anova(test2B)
+tukey2B<-TukeyHSD(aov(test2B))
+multcompLetters(extract_p(tukey2B$Souche_bacterienne))
+
+ggplot(data_test2B, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+    labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable et terreau non-autoclavé en une seule inocultation")+
+  theme(plot.title=element_text(face='bold'))
+```
+
+D'après les résultats obtenus, nous n'avons pas de différence significative de galles au sein de l'expérience 2 donc nous ne pouvons pas dire qu'il y a un effet différent entre les deux souches bactériennes utilisées sur le sol B.
+
+```{r}
+#Expérience 2 sol C
+data_test2C<-data_exp2 %>% 
+  filter(Sol=='C')
+
+test2C<-lm(Moyenne~Souche_bacterienne, data=data_test2C)
+anova(test2C)
+tukey2C<-TukeyHSD(aov(test2C))
+multcompLetters(extract_p(tukey2C$Souche_bacterienne))
+
+ggplot(data_test2C, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+    labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable autoclavé en une seule inocultation")+
+  theme(plot.title=element_text(face='bold'))
+```
+D'après les résultats obtenus, nous avons une différence significative de galles au sein de l'expérience 2 donc nous ne pouvons pas dire qu'il y a un effet identique entre les deux souches bactériennes utilisées sur le sol C.
+
+```{r}
+#Expérience 2 sol D
+data_test2D<-data_exp2 %>% 
+  filter(Sol=='D')
+
+test2D<-lm(Moyenne~Souche_bacterienne, data=data_test2D)
+anova(test2D)
+tukey2D<-TukeyHSD(aov(test2D))
+multcompLetters(extract_p(tukey2D$Souche_bacterienne))
+
+ggplot(data_test2D, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+    labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable et terreau autoclavé en une seule inocultation")+
+  theme(plot.title=element_text(face='bold'))
+```
+D'après les résultats obtenus, nous avons une différence significative de galles au sein de l'expérience 2 donc nous ne pouvons pas dire qu'il y a un effet identique entre les deux souches bactériennes utilisées sur le sol D.
+
+
+
+```{r}
+#Expérience 3 sol A
+data_test3A<-data_exp3 %>% 
+  filter(Sol=='A')
+
+test3A<-lm(Moyenne~Souche_bacterienne, data=data_test3A)
+anova(test3A)
+tukey3A<-TukeyHSD(aov(test3A))
+multcompLetters(extract_p(tukey3A$Souche_bacterienne))
+
+ggplot(data_test3A, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+    labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable non-autoclavé en trois inocultations")+
+  theme(plot.title=element_text(face='bold'))
+```
+D'après les résultats obtenus, nous n'avons pas de différence significative de galles au sein de l'expérience 3 donc nous ne pouvons pas dire qu'il y a un effet différent entre les deux souches bactériennes utilisées sur le sol A.
+
+```{r}
+#Expérience 3 sol B
+data_test3B<-data_exp3 %>% 
+  filter(Sol=='B')
+
+test3B<-lm(Moyenne~Souche_bacterienne, data=data_test3B)
+anova(test3B)
+tukey3B<-TukeyHSD(aov(test3B))
+multcompLetters(extract_p(tukey3B$Souche_bacterienne))
+
+ggplot(data_test3B, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+      labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable et terreau non-autoclavé en trois inocultations")+
+  theme(plot.title=element_text(face='bold'))
+```
+
+D'après les résultats obtenus, nous n'avons pas de différence significative de galles au sein de l'expérience 3 donc nous ne pouvons pas dire qu'il y a un effet différent entre les deux souches bactériennes utilisées sur le sol B.
+
+```{r}
+#Expérience 3 sol C
+data_test3C<-data_exp2 %>% 
+  filter(Sol=='C')
+
+test3C<-lm(Moyenne~Souche_bacterienne, data=data_test3C)
+anova(test3C)
+tukey3C<-TukeyHSD(aov(test3C))
+multcompLetters(extract_p(tukey3C$Souche_bacterienne))
+
+ggplot(data_test3C, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+      labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable autoclavé en trois inocultations")+
+  theme(plot.title=element_text(face='bold'))
+```
+D'après les résultats obtenus, nous avons une différence significative de galles au sein de l'expérience 2 donc nous ne pouvons pas dire qu'il y a un effet identique entre les deux souches bactériennes utilisées sur le sol C.
+
+```{r}
+#Expérience 3 sol D
+data_test3D<-data_exp3 %>% 
+  filter(Sol=='D')
+
+test3D<-lm(Moyenne~Souche_bacterienne, data=data_test3D)
+anova(test3D)
+tukey3D<-TukeyHSD(aov(test3D))
+multcompLetters(extract_p(tukey3D$Souche_bacterienne))
+
+ggplot(data_test3D, aes(Souche_bacterienne, Moyenne))+
+  geom_boxplot()+
+      labs(title="Nombre de galles par plante en fonction de la souche bactérienne utilisée \n dans du sable et terreau autoclavé en trois inocultations")+
+  theme(plot.title=element_text(face='bold'))
+```
+D'après les résultats obtenus, nous avons une différence significative de galles au sein de l'expérience 2 donc nous ne pouvons pas dire qu'il y a un effet identique entre les deux souches bactériennes utilisées sur le sol D.
+
+

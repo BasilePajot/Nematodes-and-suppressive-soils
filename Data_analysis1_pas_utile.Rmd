@@ -1,0 +1,189 @@
+---
+title: "Data analysis"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+theme_set(new=theme_bw())
+```
+
+
+```{r}
+## Importation des données avec chaque expérience dans un tableau séparé. On les convertis ensuite en tableau travaillable sous ggplot.
+data_exp1 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp1.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+data_exp2 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp2.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp3 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp3.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp4 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp4.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp5 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp5.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+
+data_exp6 <- as_tibble(read.csv(file="C:\\Documents\\ECOLE\\2021-2022 Montpellier SupAgro\\D4 JRL-AT\\Projects\\Experiments\\resultat_exp6.csv", header = TRUE, sep=",", dec= '.', stringsAsFactors=TRUE))
+
+```
+
+
+EXPERIENCE 1
+
+```{r}
+
+ggplot(data= data_exp1_ref, aes(x=log(Facteur_de_dilution), y=log(ref_bact), group=Facteur_de_dilution))+
+  geom_boxplot()+
+  geom_point(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+
+```
+
+```{r}
+ggplot(data=data_exp1_ref, aes(x=Masse_racine, y=log(Nombre_de_bacteries), group=Masse_racine))+
+  geom_point(aes(col=Sol))+
+  geom_smooth(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+
+```
+
+EXPERIENCE 2
+
+```{r}
+ggplot(data=data_exp2, aes(x=Souche_bacterienne, y=Moyenne, group = Souche_bacterienne))+
+  geom_boxplot()+
+  geom_point(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+
+```
+
+```{r}
+ggplot(data=data_exp2, aes(x=Moyenne, y=Taille_plante))+
+  geom_point(aes(col=Sol))+
+  geom_smooth(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+```
+
+
+
+```{r}
+data_exp2 <-data_exp2 %>% 
+  mutate(moyenne_ref=Moyenne/Taille_plante)
+
+ggplot(data=data_exp2, aes(x=Souche_bacterienne, y=moyenne_ref, group=Souche_bacterienne))+
+  geom_boxplot()+
+  geom_point(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+```
+
+
+```{r}
+ggplot(data=data_exp2, aes(x=Souche_bacterienne, y=Taille_plante, group=Souche_bacterienne))+
+  geom_boxplot()+
+  geom_point(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+```
+
+
+
+EXPERIENCE 3
+
+```{r}
+ggplot(data=data_exp3, aes(x=Souche_bacterienne, y=Moyenne, group = Souche_bacterienne))+
+  geom_boxplot()+
+  geom_point(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+
+```
+
+```{r}
+ggplot(data=data_exp3, aes(x=Moyenne, y=Taille_plante))+
+  geom_point(aes(col=Sol))+
+  geom_smooth(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+```
+
+
+
+```{r}
+data_exp3 <-data_exp3 %>% 
+  mutate(moyenne_ref=Moyenne/Taille_plante)
+
+ggplot(data=data_exp3, aes(x=Souche_bacterienne, y=moyenne_ref, group=Souche_bacterienne))+
+  geom_boxplot()+
+  geom_point(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+```
+
+
+```{r}
+ggplot(data=data_exp3, aes(x=Souche_bacterienne, y=Taille_plante, group=Souche_bacterienne))+
+  geom_boxplot()+
+  geom_point(aes(col=Sol))+
+  scale_colour_manual(values=c('orangered1','blue1', 'darkmagenta','turquoise2'))
+
+```
+
+
+EXPERIENCE 4
+
+C'est un témoin, je ne sais pas quoi représenter.
+```{r}
+ggplot(data=data_exp4, aes(x=Sol, y=Moyenne.galles, fill=Sol))+
+  geom_boxplot()
+test1<-lm(Moyenne.galles~Sol, data=data_exp4)
+anova(test1)
+
+
+tukey <- TukeyHSD(aov(test1))
+
+multcompLetters(extract_p(tukey$Sol))
+
+```
+
+EXPERIENCE 5
+
+C'est pareil et de même pour la 6.
+
+
+QUESTION BIOLOGIQUES :
+
+1. Est-ce que les bactéries ont un effet sur l'infection des nématodes ?
+
+```{r}
+ggplot(data=data_exp1, aes(x=Sol1, y=Nombre_bacteries.mL, fill =Sol1))+
+  geom_boxplot()
+
+test <- lm(Nombre_bacteries.mL~Sol1, data=data_exp1)
+anova(test)
+
+
+
+```
+
+
+```{r}
+```
+2. Est-ce qu'il y a une différence de virulence entre les deux souches bactérienne (*/Wt)?
+3. Est-ce qu'il y a une différence d'infection selon le sol ?
+4. Y a-t-il ue différence de survie des bactéries dans les différents sols ?
+5.Y a-t-il une différence de virulence des bactéries selon le sol ?
+6. Y a-t-il une différence de virulence selon le mode d'inoculation ?
+7. Le surnageant a-t-il un effet nématicide ?
+
